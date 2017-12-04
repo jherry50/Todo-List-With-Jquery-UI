@@ -1,5 +1,5 @@
 body{
-    background-color: gainsboro;
+    background-image: url(background.jpg);
 }
 #container{
     width:750px;
