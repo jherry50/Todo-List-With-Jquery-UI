@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List Application</title>
+    <link rel="stylesheet" href="jquery-ui.css">
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <div id="container">
+        <h2>To Do List</h2>
+        <button id="btnAddProject">Add Project</button>
+        <div id="projects">
+            <ul id="main">
+                <li><a href="#personal">Personal</a></li>
+                <li><a href="#work">Work</a></li>
+            </ul>
+            <ol id="personal">
+                <li><input type="checkbox">Doctor Appointment </li>
+                <li><input type="checkbox">Call the plumber </li>
+            </ol>
+            <ol id="work">
+                <li><input type="checkbox">Complete test case document </li>
+                <li><input type="checkbox">Meet supervisor </li>
+            </ol>
+            
+         </div>
+        <div id="projectDialog" title="Add a project" style="display:none">
+            <label for="newProject">Project Name:</label><input id="newProject" type="text" />
+        </div>
+    
+        <button id="btnAddTask">Add Task</button>
+
+        <div id="task-dialog" title="Add a Task" style="display: none;">
+            <label for="new-task">Task: </label>
+            <input type="text" id="new-task">
+        </div>
+    </div>
+    
+    <script src="external/jquery/jquery.js"></script>
+    <script src="jquery-ui.js"></script>
+    
+    <script>
+    $(document).ready(function(){
+    $("#projects").tabs();
+    $("ul").sortable({axis:"x", containment:"#projects"});
+     $("ol").sortable({axis:"y", containment:"#projects"});
+        $("#btnAddProject").button().click(function(){
+            $("#projectDialog").dialog({width:400, resizable:false, modal:true,
+                                       buttons:{"Add New Project":function(){
+                                         var projectName = $("#newProject").val();
+                                           $("<li><a href='#" + projectName + "'>" + projectName + "</a></li>").appendTo("#main");
+                                           $("<ol id='" + projectName + "'></ol>").appendTo("#projects");
+                                            $("#projects").tabs("refresh");
+                                           var tabCount = $("#projects .ui-tabs-nav li").length;
+                                            $("#projects").tabs("option","active",tabCount-1);
+                                          
+                                           $("#newProject").val("");
+                                           $(this).dialog("close");
+                                           
+                                       },"Cancel":function(){
+                                           $("#newProject").val("");
+                                           $(this).dialog("close");
+                                       }
+                                               }});
+        });
+        //for second button
+     $("#btnAddTask").button().click(function(){
+               $("#task-dialog").dialog({width: 350, resizable: false,
+                  buttons: {
+                     "Add new task": function(){
+                        var taskName = $('#new-task').val();
+
+                        //obtenemos el tab index del tab activo
+                        var tabActiveIndex = $("#projects").tabs("option", "active");
+
+                        // obtenemos el id del tab activo
+                        var idTabActive = $("#projects> ul> li> a").eq(tabActiveIndex).attr("href");
+
+                        // le quitamos el # al id
+                        idTabActive = idTabActive.slice(1);
+
+                        // agregamos a la lista
+                        $("ol#" + idTabActive).append("<li><input type='checkbox'>" + taskName + "</li>");
+$("#projects").tabs("refresh");
+                        $("#new-task").val("");
+                        $(this).dialog('close');
+
+                     },
+                     "Cancel": function(){
+                        $("#new-task").val("");
+                        $(this).dialog('close');
+                     }
+                  }
+               });
+            });
+
+            $('ol> li> input[type=checkbox]').click(function(){
+               if (this.checked) {
+                  $(this).parent().remove();
+               }
+            });
+        });
+        
+    </script>
+
+
+   
+</body>
+</html>
